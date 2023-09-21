@@ -2,4 +2,9 @@
 *.log
 *.tfstate
 *.tfstate.*.backup
+*.tfstate.backup
 .terraform
+src/**.terraform
+src/**.tfstate
+src/**.tfstate.*.backup
+src/**.tfstate.backup

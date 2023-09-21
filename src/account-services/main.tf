@@ -53,6 +53,7 @@ module "kaira_sgroups_module" {
 }
 
 module "kaira_keys_module" {
-  source               = "./modules/keys"
-  kaira_public_rsa_key = local.public_rsa_key
+  source                = "./modules/keys"
+  kaira_public_key_name = local.public_key_name
+  kaira_public_rsa_key  = local.public_rsa_key
 }
