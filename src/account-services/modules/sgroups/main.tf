@@ -1,3 +1,4 @@
+variable "kaira_vpc_id" {}
 variable "kaira_office_ip" {}
 
 resource "aws_default_security_group" "default" {
@@ -5,7 +6,7 @@ resource "aws_default_security_group" "default" {
     Name = "DON'T USE!!!!"
   }
 
-  vpc_id   = aws_vpc.kaira_vpc.id
+  vpc_id = var.kaira_vpc_id
 }
 
 resource "aws_security_group" "kaira_security_group_default" {
@@ -15,7 +16,7 @@ resource "aws_security_group" "kaira_security_group_default" {
 
   name        = "kaira-sg-default"
   description = "Default security group from office"
-  vpc_id      = aws_vpc.kaira_vpc.id
+  vpc_id      = var.kaira_vpc_id
 
   ingress {
     description = "PINGv4 from Office IP"

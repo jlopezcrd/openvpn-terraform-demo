@@ -7,5 +7,5 @@ data "http" "office_ip_address" {
 
 locals {
   office_ip_address = "${chomp(data.http.office_ip_address.response_body)}/32"
-  public_rsa_key    = file(var.kaira_public_rsa_path)
+  public_rsa_key    = file(var.kaira_public_rsa_path) //"/home/$USER/.ssh/id_rsa.pub"
 }
