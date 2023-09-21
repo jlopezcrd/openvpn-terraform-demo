@@ -47,7 +47,10 @@ apply:
 	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} apply --auto-approve; fi
 
 destroy:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} destroy --auto-approve; fi
+	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} destroy --auto-approve; \
+	rm -rf .clients; \
+	rm openvpn.config.txt; \
+	fi
 
 clean:
 	@sed -i '/TF_VAR_KAIRA_PRIVATE_RSA_PATH/d' ~/.bashrc

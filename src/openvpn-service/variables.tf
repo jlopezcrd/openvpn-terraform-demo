@@ -66,7 +66,7 @@ variable "KAIRA_PRIVATE_RSA_PATH" {
 
 variable "kaira_openvpn_users_list" {
   type      = string
-  default   = "./.users"
+  default   = "../config/users"
   sensitive = false
 }
 
@@ -74,20 +74,19 @@ variable "kaira_openvpn_script" {
   type      = string
   default   = <<EOF
 #!/bin/bash
-touch /tmp/starting.lock
+mkdir -p /opt/openvpn/clients
+chown -R ubuntu:ubuntu /opt/openvpn
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install git jq -y
 sudo hostnamectl set-hostname $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 | tr '.' '-')
-mkdir -p /opt/openvpn/clients
 cd /opt/openvpn
 curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
 chmod +x openvpn-install.sh
-chown -R ubuntu:ubuntu /opt/openvpn
 sudo AUTO_INSTALL=y \
 APPROVE_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) \
 ENDPOINT=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname) \
 ./openvpn-install.sh
-rm /tmp/starting.lock
+touch /tmp/provisioned.lock
 EOF
   sensitive = false
 }

@@ -88,7 +88,7 @@ resource "aws_eip" "kaira_openvpn_eip" {
 }
 
 resource "null_resource" "kaira_openvpn_endpoints" {
-  depends_on = [aws_instance.kaira_openvpn_server]
+  depends_on = [aws_eip.kaira_openvpn_eip, aws_instance.kaira_openvpn_server]
 
   triggers = {
     kaira_openvpn_eip = aws_eip.kaira_openvpn_eip.public_ip
@@ -96,11 +96,7 @@ resource "null_resource" "kaira_openvpn_endpoints" {
 
   provisioner "local-exec" {
     command = <<EOF
-    echo "["
-    echo "{public_ip: ${aws_eip.kaira_openvpn_eip.public_ip}}" > openvpn.config.txt
-    echo "{private_ip: ${aws_eip.kaira_openvpn_eip.private_ip}}" >> openvpn.config.txt
-    echo "{public_dns: ${aws_eip.kaira_openvpn_eip.public_dns}}" >> openvpn.config.txt
-    echo "]"
+    terraform output -json > ../openvpn.config.txt
     echo "--------------"
     echo "SSH Config created"
     echo "--------------"
@@ -108,7 +104,7 @@ resource "null_resource" "kaira_openvpn_endpoints" {
   }
 }
 
-resource "null_resource" "kaira_openvpn_users" {
+resource "null_resource" "kaira_openvpn_bootstrap_complete" {
   depends_on = [aws_instance.kaira_openvpn_server]
 
   triggers = {
@@ -125,15 +121,56 @@ resource "null_resource" "kaira_openvpn_users" {
     agent       = false
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "while [ -f /tmp/starting.lock ]; do echo 'Waiting until the machine is configured..'; sleep 10; done;"
-    ]
+  provisioner "local-exec" {
+    command = <<EOF
+    echo "--------------"
+    echo "Waiting until the machine is configured.."
+    echo "--------------"
+    EOF
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+    isConfiguring=true
+    while $isConfiguring; do
+      echo 'Waiting until the machine is configured...'
+      sleep 10
+      scp -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -i ${var.KAIRA_PRIVATE_RSA_PATH} \
+        ubuntu@${aws_eip.kaira_openvpn_eip.public_ip}:/tmp/provisioned.lock /tmp/provisioned.lock 2>/dev/null
+      if [ $? -eq 0 ]; then
+        isConfiguring=false
+      fi
+    done;
+    EOF
+  }
+}
+
+resource "null_resource" "kaira_openvpn_users" {
+  depends_on = [
+    aws_instance.kaira_openvpn_server,
+    null_resource.kaira_openvpn_endpoints,
+    null_resource.kaira_openvpn_bootstrap_complete
+  ]
+
+  triggers = {
+    kaira_openvpn_users_list      = local.openvpn_users_list,
+    kaira_openvpn_add_user_script = file("./openvpn-add-user.sh")
+  }
+
+  connection {
+    type        = "ssh"
+    host        = aws_eip.kaira_openvpn_eip.public_ip
+    user        = "ubuntu"
+    port        = "22"
+    private_key = file(var.KAIRA_PRIVATE_RSA_PATH)
+    agent       = false
   }
 
   provisioner "file" {
-    source      = "./.users"
-    destination = "/opt/openvpn/.users"
+    source      = var.kaira_openvpn_users_list
+    destination = "/opt/openvpn/users"
   }
 
   provisioner "file" {
@@ -150,10 +187,10 @@ resource "null_resource" "kaira_openvpn_users" {
 
   provisioner "local-exec" {
     command = <<EOF
-    mkdir -p .clients;
+    mkdir -p ../.clients;
     scp -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        -i ${var.KAIRA_PRIVATE_RSA_PATH} ubuntu@${aws_eip.kaira_openvpn_eip.public_ip}:/opt/openvpn/clients/*.ovpn .clients/
+        -i ${var.KAIRA_PRIVATE_RSA_PATH} ubuntu@${aws_eip.kaira_openvpn_eip.public_ip}:/opt/openvpn/clients/*.ovpn ../.clients/
     echo "--------------"
     echo "OpenVPN clients downloaded"
     echo "--------------"
