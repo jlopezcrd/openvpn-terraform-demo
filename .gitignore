@@ -1,0 +1,5 @@
+# .gitignore
+*.log
+*.tfstate
+*.tfstate.*.backup
+.terraform
