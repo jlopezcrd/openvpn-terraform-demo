@@ -19,6 +19,13 @@ data "aws_ami" "kaira_aws_ubuntu_ami" {
   owners = ["amazon"]
 }
 
+data "aws_vpc" "kaira_aws_vpc" {
+  filter {
+    name = "tag:Name"
+    values = [local.vpc_id]
+  }
+}
+
 data "aws_subnet" "kaira_aws_subnet" {
   filter {
     name = "tag:Name"
@@ -45,7 +52,7 @@ variable "kaira_root_volume_size" {
   sensitive   = false
 }
 
-variable "kaira_public_rsa_path" {
+variable "KAIRA_PUBLIC_RSA_PATH" {
   description = "Absolute path to your rsa public key"
   type        = string
   sensitive   = false
