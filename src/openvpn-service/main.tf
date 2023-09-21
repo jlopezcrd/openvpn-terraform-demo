@@ -96,9 +96,11 @@ resource "null_resource" "kaira_openvpn_endpoints" {
 
   provisioner "local-exec" {
     command = <<EOF
-    echo "${aws_eip.kaira_openvpn_eip.public_ip}" > public.ip.txt
-    echo "${aws_eip.kaira_openvpn_eip.private_ip}" > private.ip.txt
-    echo "${aws_eip.kaira_openvpn_eip.public_dns}" > public.dns.txt
+    echo "["
+    echo "{public_ip: ${aws_eip.kaira_openvpn_eip.public_ip}}" > openvpn.config.txt
+    echo "{private_ip: ${aws_eip.kaira_openvpn_eip.private_ip}}" >> openvpn.config.txt
+    echo "{public_dns: ${aws_eip.kaira_openvpn_eip.public_dns}}" >> openvpn.config.txt
+    echo "]"
     echo "--------------"
     echo "SSH Config created"
     echo "--------------"
@@ -125,7 +127,7 @@ resource "null_resource" "kaira_openvpn_users" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chown -R ubuntu:ubuntu /opt/openvpn/"
+      "while [ -f /tmp/starting.lock ]; do echo 'Waiting until the machine is configured..'; sleep 10; done;"
     ]
   }
 

@@ -74,6 +74,7 @@ variable "kaira_openvpn_script" {
   type      = string
   default   = <<EOF
 #!/bin/bash
+touch /tmp/starting.lock
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install git jq -y
 sudo hostnamectl set-hostname $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 | tr '.' '-')
@@ -86,6 +87,7 @@ sudo AUTO_INSTALL=y \
 APPROVE_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) \
 ENDPOINT=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname) \
 ./openvpn-install.sh
+rm /tmp/starting.lock
 EOF
   sensitive = false
 }
