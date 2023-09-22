@@ -29,7 +29,7 @@ data "aws_vpc" "kaira_aws_vpc" {
 data "aws_subnet" "kaira_aws_subnet" {
   filter {
     name   = "tag:Name"
-    values = [local.subnet_public_a]
+    values = [local.subnet_public_b]
   }
 }
 
