@@ -87,23 +87,6 @@ resource "aws_eip" "kaira_openvpn_eip" {
   instance = aws_instance.kaira_openvpn_server.id
 }
 
-resource "null_resource" "kaira_openvpn_endpoints" {
-  depends_on = [aws_eip.kaira_openvpn_eip, aws_instance.kaira_openvpn_server]
-
-  triggers = {
-    kaira_openvpn_eip = aws_eip.kaira_openvpn_eip.public_ip
-  }
-
-  provisioner "local-exec" {
-    command = <<EOF
-    terraform output -json > ../openvpn.config.txt
-    echo "--------------"
-    echo "Output OpenVPN created ../openvpn.config.txt"
-    echo "--------------"
-    EOF
-  }
-}
-
 resource "null_resource" "kaira_openvpn_bootstrap_complete" {
   depends_on = [aws_instance.kaira_openvpn_server]
 
@@ -150,7 +133,6 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
 resource "null_resource" "kaira_openvpn_users" {
   depends_on = [
     aws_instance.kaira_openvpn_server,
-    null_resource.kaira_openvpn_endpoints,
     null_resource.kaira_openvpn_bootstrap_complete
   ]
 

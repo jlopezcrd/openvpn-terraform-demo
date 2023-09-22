@@ -1,13 +1,24 @@
 #!/bin/python
 
 import os
+import subprocess
 
 basePath = os.getcwd()
 
 def destroyAll():
-    for service in ["/account-services", "/openvpn-service"]:
+    for service in ["/openvpn-service", "/account-services"]:
         directory = basePath + service
-        os.system(f"terraform -chdir={directory} destroy --auto-approve")        
+        #os.system(f"terraform -chdir={directory} destroy --auto-approve")
+        process = subprocess.Popen(
+            f"terraform -chdir={directory} destroy --auto-approve",
+            shell=True,
+            stdout=subprocess.PIPE
+        )
+        
+        for line in process.stdout:
+            print(line.decode('UTF-8'))
+
+        process.wait()
 
     if os.path.isdir(".clients"):
         #os.rmdir(".clients")
