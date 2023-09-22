@@ -4,3 +4,4 @@
 **.tfstate.*.backup
 **.tfstate.backup
 **.ovpn
+**openvpn.config.txt
