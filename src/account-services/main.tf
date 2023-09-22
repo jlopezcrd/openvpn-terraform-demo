@@ -57,3 +57,7 @@ module "kaira_keys_module" {
   kaira_public_key_name = local.public_key_name
   kaira_public_rsa_key  = local.public_rsa_key
 }
+
+module "kaira_ecr_module" {
+  source = "./modules/ecr"
+}

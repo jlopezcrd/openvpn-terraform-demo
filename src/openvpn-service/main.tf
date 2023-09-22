@@ -98,7 +98,7 @@ resource "null_resource" "kaira_openvpn_endpoints" {
     command = <<EOF
     terraform output -json > ../openvpn.config.txt
     echo "--------------"
-    echo "SSH Config created"
+    echo "Output OpenVPN created ../openvpn.config.txt"
     echo "--------------"
     EOF
   }

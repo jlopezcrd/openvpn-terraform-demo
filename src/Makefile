@@ -25,28 +25,35 @@ configure:
 	@export TF_VAR_KAIRA_PUBLIC_RSA_PATH="~/.ssh/id_rsa.pub"
 
 init:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} init; fi
+	@chmod +x ./scripts/init.sh
+	@bash ./scripts/init.sh
 
 format:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} fmt; fi
+	@chmod +x ./scripts/format.sh
+	@bash ./scripts/format.sh
 
 validate:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} validate; fi
+	@chmod +x ./scripts/validate.sh
+	@bash ./scripts/validate.sh
 
 plan:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} plan; fi
+	@chmod +x ./scripts/plan.sh
+	@bash ./scripts/plan.sh
 
 apply:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} apply --auto-approve; fi
+	@chmod +x ./scripts/apply.sh
+	@bash ./scripts/apply.sh
+
+applyAll:
+	@chmod +x ./scripts/applyAll.sh
+	@bash ./scripts/applyAll.sh
 
 destroy:
-	@if [ "${service}" = "" ]; then echo "Error, you have to set the service"; exit 1; else terraform -chdir=${service} destroy --auto-approve; \
-	rm -rf .clients; \
-	rm openvpn.config.txt; \
-	fi
+	@chmod +x ./scripts/destroy.sh
+	@bash ./scripts/destroy.sh
 
 clean:
 	@sed -i '/TF_VAR_KAIRA_PRIVATE_RSA_PATH/d' ~/.bashrc
 	@sed -i '/TF_VAR_KAIRA_PUBLIC_RSA_PATH/d' ~/.bashrc
 	@export TF_VAR_KAIRA_PRIVATE_RSA_PATH=
-	@lexport TF_VAR_KAIRA_PUBLIC_RSA_PATH=
+	@export TF_VAR_KAIRA_PUBLIC_RSA_PATH=
