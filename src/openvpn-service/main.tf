@@ -133,8 +133,6 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
     command = <<EOF
     isConfiguring=true
     while $isConfiguring; do
-      echo 'Waiting until the machine is configured...'
-      sleep 10
       scp -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -i ${var.KAIRA_PRIVATE_RSA_PATH} \
@@ -142,6 +140,8 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
       if [ $? -eq 0 ]; then
         isConfiguring=false
       fi
+      echo 'Waiting until the machine is configured...'
+      sleep 10
     done;
     EOF
   }

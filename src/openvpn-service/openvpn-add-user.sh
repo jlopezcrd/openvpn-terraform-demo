@@ -1,7 +1,7 @@
 #!/bin/bash
 
-for ((index=0; index<$(cat /opt/openvpn/users | jq 'users | length'); index++)); do
-    client=$(cat /opt/openvpn/users | jq users[$index].name | sed -r 's/"//g')
+for ((index=0; index<$(cat /opt/openvpn/users | jq '.users | length'); index++)); do
+    client=$(cat /opt/openvpn/users | jq .users[$index].name | sed -r 's/"//g')
     echo "---------------------"
     echo "Creating $client vpn..."
     echo "---------------------"
