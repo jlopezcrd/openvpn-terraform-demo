@@ -23,10 +23,26 @@ provider "aws" {
   }
 }
 
+resource "null_resource" "kaira_account_services" {
+  provisioner "local-exec" {
+    interpreter = [ "/bin/bash", "-c" ]
+    command = <<EOF
+    if [ test ! -e "../account.output.txt" ]; then
+      echo "--------------"
+      echo "You must to run account-services first to prepare the basic account"
+      echo "--------------"
+      exit 1
+    fi    
+    EOF
+  }
+}
+
 resource "aws_security_group" "kaira_openvpn_sg" {
   tags = {
     Name = "kaira-sg-openvpn"
   }
+
+  depends_on = [ null_resource.kaira_account_services ]
 
   name        = "kaira-sg-openvpn"
   description = "Rules for openvpn service"
@@ -60,6 +76,8 @@ resource "aws_instance" "kaira_openvpn_server" {
     Name = "kaira-openvpn-server"
   }
 
+  depends_on = [ null_resource.kaira_account_services ]
+
   ami                         = data.aws_ami.kaira_aws_ubuntu_ami.id
   associate_public_ip_address = true
   instance_type               = var.kaira_instance_type
@@ -83,12 +101,14 @@ resource "aws_eip" "kaira_openvpn_eip" {
     Name = "kaira-openvpn-eip"
   }
 
+  depends_on = [ null_resource.kaira_account_services ]
+
   domain   = "vpc"
   instance = aws_instance.kaira_openvpn_server.id
 }
 
 resource "null_resource" "kaira_openvpn_bootstrap_complete" {
-  depends_on = [aws_instance.kaira_openvpn_server]
+  depends_on = [ null_resource.kaira_account_services, aws_instance.kaira_openvpn_server ]
 
   triggers = {
     kaira_openvpn_users_list      = local.openvpn_users_list,
@@ -133,6 +153,7 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
 
 resource "null_resource" "kaira_openvpn_users" {
   depends_on = [
+    null_resource.kaira_account_services,
     aws_instance.kaira_openvpn_server,
     null_resource.kaira_openvpn_bootstrap_complete
   ]

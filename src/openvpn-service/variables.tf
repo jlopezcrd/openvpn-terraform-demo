@@ -66,7 +66,7 @@ variable "KAIRA_PRIVATE_RSA_PATH" {
 
 variable "kaira_openvpn_users_list" {
   type      = string
-  default   = "../config/users"
+  default   = "../../config/users"
   sensitive = false
 }
 

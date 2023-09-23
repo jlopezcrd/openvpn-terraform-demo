@@ -37,7 +37,7 @@ To run this project without problems, you need to have installed in your persona
 
 I understand that using `aws key and aws secret key` with *admin permissions* is causing a security risk, but, REMEMBER... this is a demo!!
 
-> If you're going to use in business production mode, you should use a `session crentials` or `sso login`
+> If you're going to use in business production mode, you should use a `session crentials` or `aws organizations` or `sso login`
 
 ## How to launch my OpenVPN server using this repository
 
@@ -228,6 +228,11 @@ ssh ubuntu@XXX.XXX.XXX.XXX
 
 **If you're reading this line, everything went well, and you have an OpenVPN server configured by terraform.**
 
+## Final thoughts
+
+If the company has a good roadmap to migrate to the CLOUD, this architecture should be analyzed in deep, and my advice it would be use OpenVPN container over ECS FARGATE service.
+
+Some commands
 
 aws ecr get-login-password --region eu-south-2 | docker login --username AWS --password-stdin XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com
 

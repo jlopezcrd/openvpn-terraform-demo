@@ -25,8 +25,12 @@ def destroyAll():
         # can be with shutil.rmtree("path_to_dir") but for avoid to another import
         os.system("rm -rf .clients")
     
-    if os.path.isfile("openvpn.config.txt"):
-        os.remove("openvpn.config.txt")
+
+    if os.path.isfile("../openvpn.config.txt"):
+        os.remove("../openvpn.config.txt")
+
+    if os.path.isfile("../account.output.txt"):
+        os.remove("../account.output.txt")
 
 if __name__ == "__main__":
    destroyAll()
