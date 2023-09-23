@@ -143,6 +143,11 @@ terraform plan
 
 In this step, you can choose to apply the changes for each infrastructure or using automatic tool.
 
+By running any this options, by default it will be created two openvpn users:
+
+- julio
+- mario
+
 [make]
 ```bash
 cd src
@@ -184,9 +189,45 @@ cd openvpn-service
 terraform apply
 ```
 
-# Fifth Step
+## Fifth Step
 
-//TODO
+If all was well, you should see an output like this:
+
+```bash
+output_kaira_openvpn_server = {
+  "openvpn_dns_name" = "ec2-XXX-XXX-XXX-XXX.eu-south-2.compute.amazonaws.com"
+  "openvpn_private_ip" = "10.100.XXX.XXX"
+  "openvpn_public_ip" = "XXX.XXX.XXX.XXX"
+  "openvpn_server" = "arn:aws:ec2:eu-south-2:XXXXXXXXXXXX:instance/i-xxxxxxxxxxxxxxxxx"
+}
+```
+
+**Then you can connect via PUBLIC IP or PRIVATE IP if you are connected to OpenVPN.**
+
+To connect to the server with public ip, you have to enter this command:
+
+```bash
+# change XXX.XXX.XXX.XXX to openvpn_public_ip
+ssh ubuntu@XXX.XXX.XXX.XXX
+```
+
+To connect to the server with private ip, follow this steps:
+
+```bash
+# First get userconfig.ovpn file from .clients folder generated in deploying time and insert into your OpenVPN client.
+
+# After that, select the new profile in your OpenVPN client and click on connect
+#
+# You should be connected to the VPN
+#
+# Now, it's moment to test if the ssh connection using private ip is successfully.
+#
+# change XXX.XXX.XXX.XXX to openvpn_private_ip
+ssh ubuntu@XXX.XXX.XXX.XXX
+```
+
+**If you're reading this line, everything went well, and you have an OpenVPN server configured by terraform.**
+
 
 aws ecr get-login-password --region eu-south-2 | docker login --username AWS --password-stdin XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com
 
