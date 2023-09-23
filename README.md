@@ -33,7 +33,11 @@ To run this project without problems, you need to have installed in your persona
 - terraform (to deploy infrastructure to AWS)
 - python3 (to use automation tool)
 
-**Also**, you must to configure your *AWS credentials* and the environment vars.
+**Also**, you must to configure your *AWS credentials* with *ADMIN permissions* and the environment vars.
+
+I understand that using `aws key and aws secret key` with *admin permissions* is causing a security risk, but, REMEMBER... this is a demo!!
+
+> If you're going to use in business production mode, you should use a `session crentials` or `sso login`
 
 ## How to launch my OpenVPN server using this repository
 
@@ -60,7 +64,7 @@ You should choose what tool to automate the deploy you want, or in the other han
   - Follow the instructions with the [python] prefix
 - I want to use `bash` because I'm a system administrator
   - Follow the instructions with the [bash] prefix
-- I want to run the commands by my hands
+- I want to run the commands by my `hands`
   - Follow the instructions with the [manual] prefix
 
 ### Second Step
@@ -135,7 +139,7 @@ cd openvpn-service
 terraform plan
 ```
 
-## Four Step
+## Fourth Step
 
 In this step, you can choose to apply the changes for each infrastructure or using automatic tool.
 
@@ -180,6 +184,9 @@ cd openvpn-service
 terraform apply
 ```
 
+# Fifth Step
+
+//TODO
 
 aws ecr get-login-password --region eu-south-2 | docker login --username AWS --password-stdin XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com
 

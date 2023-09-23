@@ -92,7 +92,7 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
 
   triggers = {
     kaira_openvpn_users_list      = local.openvpn_users_list,
-    kaira_openvpn_add_user_script = file("./openvpn-add-user.sh")
+    kaira_openvpn_add_user_script = filemd5("./openvpn-add-user.sh")
   }
 
   connection {
@@ -138,7 +138,7 @@ resource "null_resource" "kaira_openvpn_users" {
 
   triggers = {
     kaira_openvpn_users_list      = local.openvpn_users_list,
-    kaira_openvpn_add_user_script = file("./openvpn-add-user.sh")
+    kaira_openvpn_add_user_script = filemd5("./openvpn-add-user.sh")
   }
 
   connection {

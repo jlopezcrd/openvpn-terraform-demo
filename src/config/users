@@ -1,10 +1,12 @@
 {
     "users": [
         {
-            "name": "julio"
+            "name": "julio",
+            "status": "active"
         },
         {
-            "name": "mario"
+            "name": "mario",
+            "status": "active"
         }
     ]
 }

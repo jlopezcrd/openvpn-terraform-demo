@@ -13,5 +13,5 @@ locals {
   subnet_public_c    = "kaira-subnet-public-c"
   public_key_name    = "kaira-rsa-public-key"
   public_rsa_key     = file(var.KAIRA_PUBLIC_RSA_PATH) //"/home/$USER/.ssh/id_rsa.pub"
-  openvpn_users_list = file(var.kaira_openvpn_users_list)
+  openvpn_users_list = filemd5(var.kaira_openvpn_users_list)
 }
