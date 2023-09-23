@@ -6,7 +6,9 @@
 
 This github project is created to demostrate how to install a openvpn server on ec2 using terraform as provisioning tool.
 
-AWS has a lot of services to do that, but in my case, I've choose do it with a simple ec2 instance, because is a first approach to show how simple is that.
+AWS has a lot of services to do that, but in my case, I've choose do it with a simple ec2 instance, because is a first approach to show how simple is that. Also there are some problems with containers and serverless using openvpn.
+
+If you launch a container con NET_ADMIN capability is incompatible with FARGATE and you must to use EC2 Cluster. Thinking about that, is almost the same as if you manage the ec2 instances yourself.
 
 **NOTE:** In a business environment it should be necessary analyze in deep to build it with the best architecture. It depends if the company has a lot time, money, or human resources to get successfull to do it.
 
@@ -42,6 +44,33 @@ I understand that using `aws key and aws secret key` with *admin permissions* is
 ## How to launch my OpenVPN server using this repository
 
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
+
+```bash
+# TEST git
+> git --version
+git version x.xx.x
+
+# TEST awscli
+> aws --version
+aws-cli/x.xx.xx Python/x.xx.x Linux/x.xx.x-xx-generic exe/x86_64
+
+# TEST make
+> make --version
+GNU Make x.x
+Built for x86_64-pc-linux-gnu
+Copyright (C) 1988-2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+# TEST terraform
+> terraform --version
+terraform --version
+
+# TEST python3
+> python3 --version
+python3 --version
+```
 
 ### First Step
 
@@ -230,14 +259,6 @@ ssh ubuntu@XXX.XXX.XXX.XXX
 
 ## Final thoughts
 
-If the company has a good roadmap to migrate to the CLOUD, this architecture should be analyzed in deep, and my advice it would be use OpenVPN container over ECS FARGATE service.
+If the company has a good roadmap to migrate to the CLOUD, this architecture should be analyzed in deep, and my advice it would be use OpenVPN container over EC2 custom cluster to avoid the problems with containers and serverless.
 
-Some commands
-
-aws ecr get-login-password --region eu-south-2 | docker login --username AWS --password-stdin XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com
-
-docker build -t kaira-ecr .
-
-docker tag kaira-ecr:latest XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com/kaira-ecr:latest
-
-docker push XXXXXXXXXXXX.dkr.ecr.eu-south-2.amazonaws.com/kaira-ecr:latest
+Using a auto-scalling group with a custom cluster, you would have the same availability as using FARGATE
