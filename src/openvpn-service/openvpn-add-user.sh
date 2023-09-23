@@ -12,7 +12,7 @@ for ((index=0; index<$(cat /opt/openvpn/users | jq '.users | length'); index++))
         sudo mv /root/$client.ovpn /opt/openvpn/clients/$client.ovpn
         sudo chown ubuntu:ubuntu /opt/openvpn/clients/$client.ovpn
     elif [ "$status" == "revoked" ]; then
-        clientnumber=$(cat /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | grep -v "server_" | nl | grep "test3" | awk '{print $1}')
+        clientnumber=$(cat /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | grep -v "server_" | nl | grep "$client" | awk '{print $1}')
         echo "---------------------"
         echo "Revoking $client vpn..."
         echo "---------------------"
@@ -22,6 +22,7 @@ for ((index=0; index<$(cat /opt/openvpn/users | jq '.users | length'); index++))
             rm -f /opt/openvpn/clients/$client.ovpn
         fi
     else
-        # to more actions
+        # to decide more actions
+        echo "to decide more actions"
     fi
 done

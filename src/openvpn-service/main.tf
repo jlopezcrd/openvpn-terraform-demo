@@ -106,6 +106,7 @@ resource "null_resource" "kaira_openvpn_bootstrap_complete" {
 
   provisioner "local-exec" {
     command = <<EOF
+    rm -rf ../.clients/*.ovpn
     echo "--------------"
     echo "Waiting until the machine is configured.."
     echo "--------------"
