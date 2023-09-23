@@ -1,6 +1,6 @@
 # [DEMO] Installing OpenVPN Server on AWS using terraform
 
-- [Infrastructure Diagram](docs/infrastructure-digagram.pdf)
+- [Infrastructure Diagram](docs/infrastructure-diagram.pdf)
 
 ## Introduction
 
