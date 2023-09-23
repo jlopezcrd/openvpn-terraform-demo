@@ -15,6 +15,13 @@ resource "aws_security_group" "kaira_openvpn_nlb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -37,6 +44,13 @@ resource "aws_security_group" "kaira_openvpn_ecs_sg" {
     from_port       = var.kaira_container_port
     to_port         = var.kaira_container_port
     protocol        = var.kaira_container_protocol
+    security_groups = [aws_security_group.kaira_openvpn_nlb_sg.id]
+  }
+
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
     security_groups = [aws_security_group.kaira_openvpn_nlb_sg.id]
   }
 
@@ -116,14 +130,16 @@ resource "aws_lb_target_group" "kaira_external_nlb_tg" {
   protocol             = "TCP_UDP" #upper(var.kaira_container_protocol)
   vpc_id               = data.aws_vpc.kaira_aws_vpc.id
   target_type          = "ip"
-  deregistration_delay = 30
+  deregistration_delay = 10
 
-  # health_check {
-  #   protocol            = upper(var.kaira_container_protocol)
-  #   interval            = 30
-  #   healthy_threshold   = 5
-  #   unhealthy_threshold = 5
-  # }
+  health_check {
+    port                = 80
+    protocol            = "TCP" #upper(var.kaira_container_protocol)
+    interval            = 5
+    timeout             = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
 }
 
 resource "aws_lb_listener" "kaira_nlb_listener" {
@@ -145,10 +161,24 @@ resource "aws_ecs_task_definition" "kaira_openvpn_task" {
   family = var.kaira_container_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu                      = 256
-  memory                   = 256
+  cpu                      = 512
+  memory                   = 512
   execution_role_arn       = data.aws_iam_role.kaira_ecs_task_execution_role.arn
   container_definitions = jsonencode([
+    {
+      name : "healthcheck",
+      image : "nginx:latest",
+      cpu : 256,
+      memory : 256,
+      essential : true,
+      portMappings : [
+        {
+          containerPort : 80,
+          hostPort : 80,
+          protocol : "tcp"
+        },
+      ]
+    },
     {
       name : var.kaira_container_name,
       image : "366007218587.dkr.ecr.eu-south-2.amazonaws.com/kaira-ecr:latest",
