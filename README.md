@@ -77,6 +77,8 @@ In the next section you will find the command to create the necessary profile
 
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
 
+### First Step
+
 ```bash
 # TEST git
 > git --version
@@ -95,7 +97,7 @@ terraform --version
 python3 --version
 
 # Create new profile to connect with AWS API
-developez@vm-linux:~/test-openvpn/src$ aws configure --profile kaira-dev-sso
+developez@vm-linux:~$ aws configure --profile kaira-dev-sso
 AWS Access Key ID [None]: AKIXXXXXXXXXX
 AWS Secret Access Key [None]: XXXXXXXXXXXXXXXXXXXXXXXXXXX
 Default region name [None]: eu-south-2
@@ -112,6 +114,9 @@ developez@vm-linux:~$ tree .aws/
 
 developez@vm-linux:~$ cat .aws/config 
 [default]
+region = xxx
+output = xxx
+[profile kaira-dev-sso]
 region = eu-south-2
 output = json
 
@@ -120,9 +125,12 @@ developez@vm-linux:~$ cat .aws/credentials
 [default]
 aws_access_key_id = AKIXXXXXXXXXX
 aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXX
+[kaira-dev-sso]
+aws_access_key_id = AKIXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-### First Step
+### Second Step
 
 Clone this repo on your home folder
 
@@ -135,7 +143,7 @@ git clone https://github.com/jlopezcrd/openvpn-terraform-demo.git
 cd openvpn-terraform-demo
 ```
 
-### Second Step
+### Third Step
 
 Once you've cloned the repository, and you're located in the cloned folder, you have to run the automated tool.
 
@@ -194,7 +202,7 @@ Using configuration from /etc/openvpn/pki/easy-rsa-1.OOMLIk/tmp.fNgnDI
 Enter pass phrase for /etc/openvpn/pki/private/ca.key:
 ```
 
-### Third Step
+### Fourth Step
 
 If all was well, you should see an output like this:
 
@@ -208,12 +216,12 @@ output_kaira_openvpn_external_nlb = {
 }
 ```
 
-### Fourth Step
+### Fifth Step
 
 Check the openvpn credentials generated before. You should see the same DNS NAME
 
 ```bash
-developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/developez.ovpn 
+developez@vm-linux:~$ head openvpn-ecs-service/.generated/clients/developez.ovpn 
 
 client
 nobind
@@ -225,7 +233,7 @@ remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194
 <key>
 -----BEGIN PRIVATE KEY-----
 
-developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/julio.ovpn 
+developez@vm-linux:~$ head openvpn-ecs-service/.generated/clients/julio.ovpn 
 
 client
 nobind
@@ -237,7 +245,7 @@ remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194
 <key>
 -----BEGIN PRIVATE KEY-----
 
-developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/mario.ovpn 
+developez@vm-linux:~$ head openvpn-ecs-service/.generated/clients/mario.ovpn 
 
 client
 nobind
@@ -250,7 +258,7 @@ remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194
 -----BEGIN PRIVATE KEY-----
 ```
 
-### Fifth Step
+### Sixth Step
 
 Connect to the OPEN VPN using the NETWORK LOAD BALANCER. You must to be located in src folder.
 
@@ -263,7 +271,7 @@ Alternatively you can add to a OPEN VPN GUI CLIENT as the image bellow:
 ![OpenVPN GUI CLIENTE 3](docs/gui-openvpn-3.png "openvpn gui client 3")
 
 ```bash
-developez@vm-linux:~/test-openvpn/src$ sudo openvpn --config openvpn-ecs-service/.generated/clients/{developez,julio or mario}.ovpn
+developez@vm-linux:~$ sudo openvpn --config openvpn-ecs-service/.generated/clients/{developez,julio or mario}.ovpn
 
 2023-09-24 21:26:09 --cipher is not set. Previous OpenVPN version defaulted to BF-CBC as fallback when cipher negotiation failed in this case. If you need this fallback please add '--data-ciphers-fallback BF-CBC' to your configuration and/or add BF-CBC to --data-ciphers.
 2023-09-24 21:26:09 OpenVPN 2.5.5 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [LZ4] [EPOLL] [PKCS11] [MH/PKTINFO] [AEAD] built on Jul 14 2022
