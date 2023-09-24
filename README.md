@@ -62,7 +62,13 @@ I understand that using `aws key and aws secret key` with *admin permissions* is
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
 
 ```bash
-# TEST AWS folder
+# Create new profile to connect with AWS API
+developez@vm-linux:~/test-openvpn/src$ aws configure --profile kaira-dev-sso
+AWS Access Key ID [None]: AKIXXXXXXXXXX
+AWS Secret Access Key [None]: XXXXXXXXXXXXXXXXXXXXXXXXXXX
+Default region name [None]: eu-south-2
+Default output format [None]: json
+
 developez@vm-linux:~$ tree .aws/
 .aws/
 ├── config
