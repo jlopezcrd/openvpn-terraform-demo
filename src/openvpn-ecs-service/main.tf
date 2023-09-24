@@ -224,6 +224,7 @@ resource "null_resource" "kaira_upload_openvpn_image" {
 
 resource "aws_ecs_cluster" "kaira_openvpn_ecs_ec2_cluster" {
   depends_on = [
+    aws_autoscaling_group.kaira_openvpn_autoscaling_group,
     aws_lb.kaira_openvpn_external_nlb,
     null_resource.kaira_upload_openvpn_image
   ]
@@ -237,6 +238,7 @@ resource "aws_ecs_cluster" "kaira_openvpn_ecs_ec2_cluster" {
 
 resource "aws_ecs_task_definition" "kaira_openvpn_task" {
   depends_on = [
+    aws_autoscaling_group.kaira_openvpn_autoscaling_group,
     aws_lb.kaira_openvpn_external_nlb,
     null_resource.kaira_upload_openvpn_image
   ]
@@ -296,6 +298,7 @@ resource "aws_ecs_task_definition" "kaira_openvpn_task" {
 
 resource "aws_ecs_service" "kaira_openvpn_service" {
   depends_on = [
+    aws_autoscaling_group.kaira_openvpn_autoscaling_group,
     aws_lb.kaira_openvpn_external_nlb,
     null_resource.kaira_upload_openvpn_image
   ]
@@ -342,6 +345,7 @@ resource "aws_ecs_service" "kaira_openvpn_service" {
 
 resource "null_resource" "kaira_openvpn_users" {
   depends_on = [
+    aws_autoscaling_group.kaira_openvpn_autoscaling_group,
     aws_lb.kaira_openvpn_external_nlb,
     aws_ecs_cluster.kaira_openvpn_ecs_ec2_cluster,
     aws_ecs_task_definition.kaira_openvpn_task,
