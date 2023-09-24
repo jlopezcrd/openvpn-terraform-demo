@@ -78,32 +78,6 @@ In the next section you will find the command to create the necessary profile
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
 
 ```bash
-# Create new profile to connect with AWS API
-developez@vm-linux:~/test-openvpn/src$ aws configure --profile kaira-dev-sso
-AWS Access Key ID [None]: AKIXXXXXXXXXX
-AWS Secret Access Key [None]: XXXXXXXXXXXXXXXXXXXXXXXXXXX
-Default region name [None]: eu-south-2
-Default output format [None]: json
-
-developez@vm-linux:~$ tree .aws/
-.aws/
-├── config
-└── credentials
-
-0 directories, 2 files
-
-# TEST AWS config
-developez@vm-linux:~$ cat .aws/config 
-[default]
-region = eu-south-2
-output = json
-
-# TEST AWS credentials
-developez@vm-linux:~$ cat .aws/credentials 
-[default]
-aws_access_key_id = AKIXXXXXXXXXX
-aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 # TEST git
 > git --version
 git version x.xx.x
@@ -119,6 +93,33 @@ terraform --version
 # TEST python3
 > python3 --version
 python3 --version
+
+# Create new profile to connect with AWS API
+developez@vm-linux:~/test-openvpn/src$ aws configure --profile kaira-dev-sso
+AWS Access Key ID [None]: AKIXXXXXXXXXX
+AWS Secret Access Key [None]: XXXXXXXXXXXXXXXXXXXXXXXXXXX
+Default region name [None]: eu-south-2
+Default output format [None]: json
+
+
+# TEST AWS config
+developez@vm-linux:~$ tree .aws/
+.aws/
+├── config
+└── credentials
+
+0 directories, 2 files
+
+developez@vm-linux:~$ cat .aws/config 
+[default]
+region = eu-south-2
+output = json
+
+# TEST AWS credentials
+developez@vm-linux:~$ cat .aws/credentials 
+[default]
+aws_access_key_id = AKIXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ### First Step
