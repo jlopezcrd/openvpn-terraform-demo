@@ -26,9 +26,10 @@ module "kaira_igw_module" {
 }
 
 module "kaira_subnets_module" {
-  source             = "./modules/subnets"
-  kaira_vpc_ip_block = var.kaira_vpc_ip_block
-  kaira_vpc_id       = module.kaira_vpc_module.output_kaira_vpc_id
+  source               = "./modules/subnets"
+  kaira_default_region = var.kaira_default_region
+  kaira_vpc_ip_block   = var.kaira_vpc_ip_block
+  kaira_vpc_id         = module.kaira_vpc_module.output_kaira_vpc_id
 }
 
 module "kaira_rtables_module" {

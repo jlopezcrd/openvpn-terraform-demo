@@ -57,6 +57,15 @@ I understand that using `aws key and aws secret key` with *admin permissions* is
 
 > If you're going to use in business production mode, you should use a `session crentials` or `aws organizations` or `sso login`
 
+**THE AWS REGION CAN BE CHANGED in config files, but you will have to pass an environment variable when you run the script**
+
+> TF_VAR_kaira_default_region=eu-west-1 bash scripts/kaira.sh
+
+or exporting the var in your ~/.bashrc
+
+> export TF_VAR_kaira_default_region=eu-west-1
+> bash scripts/kaira.sh
+
 ## How to launch my OpenVPN server using this repository
 
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
