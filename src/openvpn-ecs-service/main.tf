@@ -214,7 +214,7 @@ resource "null_resource" "kaira_upload_openvpn_image" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
     command = <<EOF
-    aws ecr get-login-password --region ${var.kaira_default_region} | docker login --username AWS \
+    aws ecr get-login-password --profile kaira-dev-sso --region ${var.kaira_default_region} | docker login --username AWS \
     --password-stdin ${data.aws_caller_identity.account.account_id}.dkr.ecr.${var.kaira_default_region}.amazonaws.com \
     && docker push ${data.aws_ecr_repository.kaira_aws_openvpn_repo.repository_url}:latest
     EOF
