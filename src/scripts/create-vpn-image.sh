@@ -4,8 +4,8 @@
 users=${1:-"developez julio mario"}
 endpoint="vpn-test-ecs.kairadigital.com"
 folder=./openvpn-ecs-service
-accountId=$(aws sts get-caller-identity --output text | cut -d$'\t' -f 1)
-region=$(aws configure get region)
+accountId=$(aws sts get-caller-identity --profile kaira-dev-sso --output text | cut -d$'\t' -f 1)
+region=$(aws configure get region --profile kaira-dev-sso)
 output="./.generated"
 clients="${output}/clients"
 

@@ -1,11 +1,49 @@
 #!/bin/bash
 
 outputFolder="../../"
+awsConfigFolder="~/.aws"
 scriptsFolder="./scripts"
 accountServices="account-services"
 accountServicesFolder="./account-services"
 openVpnService="openvpn-ecs-cluster"
 openVpnClusterFolder="./openvpn-ecs-service"
+
+if [ ! -d ~/.aws ] || [ ! -f ~/.aws/credentials ]; then
+    echo ""
+    echo "================================="
+    echo "ERROR AWS CONFIG FOLDER NOT FOUND"
+    echo "================================="
+    echo ""
+    echo "You have to run aws configure to set your aws key and aws secret"
+    echo ""
+    exit 1
+fi
+
+grep -i "aws_access_key_id = AKI" ~/.aws/credentials >> /dev/null
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "================================="
+    echo "ERROR AWS CONFIG FOLDER NOT FOUND"
+    echo "================================="
+    echo ""
+    echo "You have to run aws configure to set your aws key and aws secret"
+    echo ""
+    exit 1
+fi
+
+grep -i "kaira-dev-sso" ~/.aws/credentials
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "========================================="
+    echo "ERROR AWS PROFILE kaira-dev-sso NOT FOUND"
+    echo "========================================="
+    echo ""
+    echo "You have to run aws configure to set your aws key and aws secret"
+    echo ""
+    exit 1
+fi
 
 if [ ! -d ${scriptsFolder} ]; then
     echo ""
@@ -18,7 +56,7 @@ if [ ! -d ${scriptsFolder} ]; then
     exit 1
 fi
 
-if [ $(aws configure get region) != "eu-south-2" ]; then
+if [ $(aws configure get region --profile kaira-dev-sso) != "eu-south-2" ]; then
     echo ""
     echo "================================"
     echo "     ERROR AWS CONFIGURATION    "
