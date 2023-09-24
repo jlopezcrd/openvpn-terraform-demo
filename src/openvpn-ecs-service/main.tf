@@ -12,14 +12,7 @@ provider "aws" {
   region  = "eu-south-2"
   profile = "kaira-dev-sso"
   default_tags {
-    tags = {
-      Name        = "kaira-resource-untagged",
-      Client      = "kaira",
-      Backup      = false,
-      Environment = "DEV",
-      ManagedBy   = "terraform"
-      OwnerBy     = "@developez"
-    }
+    tags = var.kaira_default_tags
   }
 }
 
@@ -205,8 +198,21 @@ resource "aws_lb_listener" "kaira_openvpn_nlb_listener" {
   }  
 }
 
+resource "null_resource" "kaira_upload_openvpn_image" {
+  triggers = {
+    redeployment = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "docker push ${data.aws_ecr_repository.kaira_aws_openvpn_repo.repository_url}:latest"
+  }
+}
+
 resource "aws_ecs_cluster" "kaira_openvpn_ecs_ec2_cluster" {
-  depends_on = [ aws_lb.kaira_openvpn_external_nlb ]
+  depends_on = [
+    aws_lb.kaira_openvpn_external_nlb,
+    null_resource.kaira_upload_openvpn_image
+  ]
 
   tags = {
     Name = "kaira-openvpn-cluster",
@@ -216,7 +222,10 @@ resource "aws_ecs_cluster" "kaira_openvpn_ecs_ec2_cluster" {
 }
 
 resource "aws_ecs_task_definition" "kaira_openvpn_task" {
-  depends_on = [ aws_lb.kaira_openvpn_external_nlb ]
+  depends_on = [
+    aws_lb.kaira_openvpn_external_nlb,
+    null_resource.kaira_upload_openvpn_image
+  ]
 
   tags = {
     Name = "kaira-openvpn-task",
@@ -272,7 +281,10 @@ resource "aws_ecs_task_definition" "kaira_openvpn_task" {
 }
 
 resource "aws_ecs_service" "kaira_openvpn_service" {
-  depends_on = [ aws_lb.kaira_openvpn_external_nlb ]
+  depends_on = [
+    aws_lb.kaira_openvpn_external_nlb,
+    null_resource.kaira_upload_openvpn_image
+  ]
 
   tags = {
     Name = "kaira-openvpn-service",
@@ -316,6 +328,7 @@ resource "aws_ecs_service" "kaira_openvpn_service" {
 
 resource "null_resource" "kaira_openvpn_users" {
   depends_on = [
+    aws_lb.kaira_openvpn_external_nlb,
     aws_ecs_cluster.kaira_openvpn_ecs_ec2_cluster,
     aws_ecs_task_definition.kaira_openvpn_task,
     aws_ecs_service.kaira_openvpn_service

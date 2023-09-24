@@ -88,6 +88,22 @@ data "aws_ecr_image" "kaira_aws_openvpn_image" {
   image_tag       = "latest"
 }
 
+data "aws_ecr_repository" "kaira_aws_openvpn_repo" {
+  name = "kaira-openvpn"
+}
+
+variable "kaira_default_tags" {
+  default = {
+    Name        = "kaira-resource-untagged",
+    Client      = "kaira",
+    Backup      = false,
+    Environment = "DEV",
+    ManagedBy   = "terraform"
+    OwnerBy     = "@developez"
+  }
+  sensitive = false
+}
+
 variable "kaira_openvpn_container_name" {
   type      = string
   default   = "openvpn"
