@@ -1,41 +1,57 @@
 # [DEMO] Installing OpenVPN Server on AWS using terraform
 
-- [Infrastructure Diagram](docs/infrastructure-diagram.pdf)
+- [Infrastructure Diagram](docs/openvpn-infrastructure-diagram.pdf)
 
 ## Introduction
 
 This github project is created to demostrate how to install a openvpn server on ec2 using terraform as provisioning tool.
 
-AWS has a lot of services to do that, but in my case, I've choose do it with a simple ec2 instance, because is a first approach to show how simple is that. Also there are some problems with containers and serverless using openvpn.
+AWS has a lot of services to do that, but in my case, I've choose do it with ECS cluster with three instances as workers. It is IMPORTANT remark that if you're thinking to use FARGATE, it's not possible, because AWS doesn't support NET_ADMIN capabiliy for use OPEN VPN in a container.
 
-If you launch a container con NET_ADMIN capability is incompatible with FARGATE and you must to use EC2 Cluster. Thinking about that, is almost the same as if you manage the ec2 instances yourself.
+Then only you can choose beteween ECS-EC2 CLUSTER, EC2 INSTANCES managing the ec2 instances yourself or using VPN SERVICE (SAS)
 
 **NOTE:** In a business environment it should be necessary analyze in deep to build it with the best architecture. It depends if the company has a lot time, money, or human resources to get successfull to do it.
 
-With my knowledge about AWS:
+Another point to explain, is the HEALTH-CHECKS from NLB or ECS CLUSTER doesn't support UDP protocol, for this reason, I've created a SIDECAR CONTAINER to provision a NGINX service as essential running in the same ECS TASK to have a reachable TCP PORT.
 
-- **If you don't have enough time:** I would choose using AWS VPN Service (SAS).
-- **If you have enough time and not money:** It better using AWS ECS with custom docker containers
-- **If you don't have enough money but time:** Using three EC2 with auto-scalling groups and ELB in front
+Launching two containers as ESSENTIAL, tell to ECS service that one of them is killed or down, it must destroy the TASK.
+
+There is a TERRAFORM BUG when you're trying to destroy de INFRASTRUCTURE. Terraform attempts to destroy the ECS SERVICE before the AUTOSCALING GROUP.
+
+You can see here:
+- [STACK OVERFLOW](https://stackoverflow.com/questions/68117174/during-terraform-destroy-terraform-is-trying-to-destroy-the-ecs-cluster-before)
+- [GITHUB](https://github.com/hashicorp/terraform-provider-aws/issues/4852)
 
 ## Project scaffolding
 
-//TODO
+This repository has a singular structure to add the possibility to extend services to the same account
 
-- config folder
-- 
+- ROOT
+  - docs (documentation or references)
+  - src (code)
+    - account-services (terraform basic account resources)
+    - openvpn-ecs-service (terraform openvpn resources)
+    - scripts (bash automations scripts)
+  - .editorconfig (file to configure code editors with rules defined)
+  - .gitignore (file to tell to GIT what files it must ignored)
+  - LICENSE (license of this project)
+  - README.md (principal documentation)
+
+If you would want add another services, it's simple, create another folder into src, because you don't need to recreate basic resources.
 
 ## Requirements
 
 To run this project without problems, you need to have installed in your personal computer (linux or macOs) the following tools, or if you're using windows, you must to install on WSL.
 
+- AWS ACCOUNT WITH SPAIN REGION (eu-south-2)
+- AWS ADMIN CREDENTIALS (aws access key and aws secret key)
 - git (to clone this project)
 - awscli (tool to interact with AWS API's)
-- make (to use automation tool)
 - terraform (to deploy infrastructure to AWS)
 - python3 (to use automation tool)
+- docker (to build openvpn image)
 
-**Also**, you must to configure your *AWS credentials* with *ADMIN permissions* and the environment vars.
+**Also**, you must to configure your *AWS credentials* with *ADMIN permissions*.
 
 I understand that using `aws key and aws secret key` with *admin permissions* is causing a security risk, but, REMEMBER... this is a demo!!
 
@@ -46,6 +62,26 @@ I understand that using `aws key and aws secret key` with *admin permissions* is
 **MAKE SURE you have everything correctly install before continue or you could to have errors deploying to AWS**
 
 ```bash
+# TEST AWS folder
+developez@vm-linux:~$ tree .aws/
+.aws/
+├── config
+└── credentials
+
+0 directories, 2 files
+
+# TEST AWS config
+developez@vm-linux:~$ cat .aws/config 
+[default]
+region = eu-south-2
+output = json
+
+# TEST AWS credentials
+developez@vm-linux:~$ cat .aws/credentials 
+[default]
+aws_access_key_id = AKIXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 # TEST git
 > git --version
 git version x.xx.x
@@ -85,180 +121,86 @@ git clone https://github.com/jlopezcrd/openvpn-terraform-demo.git
 cd openvpn-terraform-demo
 ```
 
-You should choose what tool to automate the deploy you want, or in the other hand, running the commands step by step manually.
-
-- I want to use `make` because is standard linux tool
-  - Follow the instructions with the [make] prefix
-- I want to use `python` because I have developer background
-  - Follow the instructions with the [python] prefix
-- I want to use `bash` because I'm a system administrator
-  - Follow the instructions with the [bash] prefix
-- I want to run the commands by my `hands`
-  - Follow the instructions with the [manual] prefix
-
 ### Second Step
 
-Once you've cloned the repository, and you're located in the folder, you have to initialize the terraform providers.
+Once you've cloned the repository, and you're located in the cloned folder, you have to run the automated bash script tool.
 
-[make]
 ```bash
 cd src
-make init service=account-services
-make init service=openvpn-service
-```
-
-[python]
-```bash
-cd src
-python3 scripts/init.py account-services
-python3 scripts/init.py openvpn-service
-```
-
-[bash]
-```bash
-cd src
-service=account-services bash scripts/init.sh
-service=openvpn-service bash scripts/init.sh
-```
-
-[manual]
-```bash
-cd src
-cd account-services
-terraform init
-cd ..
-cd openvpn-service
-terraform init
+bash scripts/kaira.sh
 ```
 
 ### Third Step
 
-Showing what infrastructure will be deployed with `terraform plan`
-
-**REMINDER:** The plan for openvpn-service doesn't work until you have created the basic account resources. If you want to review the reason, go back to [#project-scaffolding](#project-scaffolding)
-
-[make]
-```bash
-cd src
-make plan service=account-services
-make plan service=openvpn-service
-```
-
-[python]
-```bash
-cd src
-python3 scripts/plan.py account-services
-python3 scripts/plan.py openvpn-service
-```
-
-[bash]
-```bash
-cd src
-service=account-services bash scripts/plan.sh
-service=openvpn-service bash scripts/plan.sh
-```
-
-[manual]
-```bash
-cd src
-cd account-services
-terraform plan
-cd ..
-cd openvpn-service
-terraform plan
-```
-
-## Fourth Step
-
-In this step, you can choose to apply the changes for each infrastructure or using automatic tool.
-
-By running any this options, by default it will be created two openvpn users:
-
-- julio
-- mario
-
-[make]
-```bash
-cd src
-# If you want to do it automatically
-make applyAll
-# If you want to have the control
-make apply service=account-services
-make apply service=openvpn-service
-```
-
-[python]
-```bash
-cd src
-# If you want to do it automatically
-python3 scripts/applyAll.py
-# If you want to have the control
-python3 scripts/apply.py account-services
-python3 scripts/apply.py openvpn-service
-```
-
-[bash]
-```bash
-cd src
-# If you want to do it automatically
-bash scripts/applyAll.sh
-# If you want to have the control
-service=account-services bash scripts/apply.sh
-service=openvpn-service bash scripts/apply.sh
-```
-
-[manual]
-```bash
-cd src
-# With terraform commands you need to do step by step
-cd account-services
-terraform apply
-cd ..
-cd openvpn-service
-terraform apply
-```
-
-## Fifth Step
-
 If all was well, you should see an output like this:
 
 ```bash
-output_kaira_openvpn_server = {
-  "openvpn_dns_name" = "ec2-XXX-XXX-XXX-XXX.eu-south-2.compute.amazonaws.com"
-  "openvpn_private_ip" = "10.100.XXX.XXX"
-  "openvpn_public_ip" = "XXX.XXX.XXX.XXX"
-  "openvpn_server" = "arn:aws:ec2:eu-south-2:XXXXXXXXXXXX:instance/i-xxxxxxxxxxxxxxxxx"
+Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+output_kaira_openvpn_external_nlb = {
+  "dns_name" = "kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com"
 }
 ```
 
-**Then you can connect via PUBLIC IP or PRIVATE IP if you are connected to OpenVPN.**
+### Fourth Step
 
-To connect to the server with public ip, you have to enter this command:
+Check the openvpn credentials generated before. You should see the same DNS NAME
 
 ```bash
-# change XXX.XXX.XXX.XXX to openvpn_public_ip
-ssh ubuntu@XXX.XXX.XXX.XXX
+developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/developez.ovpn 
+
+client
+nobind
+dev tun
+remote-cert-tls server
+
+remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194 udp
+
+<key>
+-----BEGIN PRIVATE KEY-----
+
+developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/julio.ovpn 
+
+client
+nobind
+dev tun
+remote-cert-tls server
+
+remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194 udp
+
+<key>
+-----BEGIN PRIVATE KEY-----
+
+developez@vm-linux:~/kairadigital.com/src$ head openvpn-ecs-service/.generated/clients/mario.ovpn 
+
+client
+nobind
+dev tun
+remote-cert-tls server
+
+remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194 udp
+
+<key>
+-----BEGIN PRIVATE KEY-----
 ```
 
-To connect to the server with private ip, follow this steps:
+### Fifth Step Step
+
+Connect to the OPEN VPN using the NETWORK LOAD BALANCER. You must to be located in src folder.
 
 ```bash
-# First get userconfig.ovpn file from .clients folder generated in deploying time and insert into your OpenVPN client.
+openvpn --config openvpn-service/.generated/clients/developez.ovpn
 
-# After that, select the new profile in your OpenVPN client and click on connect
-#
-# You should be connected to the VPN
-#
-# Now, it's moment to test if the ssh connection using private ip is successfully.
-#
-# change XXX.XXX.XXX.XXX to openvpn_private_ip
-ssh ubuntu@XXX.XXX.XXX.XXX
 ```
 
 **If you're reading this line, everything went well, and you have an OpenVPN server configured by terraform.**
 
 ## Final thoughts
 
-If the company has a good roadmap to migrate to the CLOUD, this architecture should be analyzed in deep, and my advice it would be use OpenVPN container over EC2 custom cluster to avoid the problems with containers and serverless.
+This project was a bit complex, because I don't usually use container for VPNS. In fact, the incompatibility with FARGATE slowed me down a bit, because it was very difficult to find the issue. (REF to AWS DOCS)[https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_KernelCapabilities.html]
 
-Using a auto-scalling group with a custom cluster, you would have the same availability as using FARGATE
+Also comment, the first deployment was a simple EC2 node with OPENVPN service installed on it, but I thought, it's very simple, I'm going to use containers.
+
+As summary, I learned that all SERVERLESS services in the cloud doesn't support all features that you can deploy in managed services / nodes.

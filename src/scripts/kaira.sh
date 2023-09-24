@@ -1,11 +1,36 @@
 #!/bin/bash
 
 outputFolder="../../"
+awsConfigFolder="~/.aws"
 scriptsFolder="./scripts"
 accountServices="account-services"
 accountServicesFolder="./account-services"
 openVpnService="openvpn-ecs-cluster"
 openVpnClusterFolder="./openvpn-ecs-service"
+
+if [ ! -d ${awsConfigFolder} ] || [ ! -d "${awsConfigFolder}/credentials" ]; then
+    echo ""
+    echo "================================="
+    echo "ERROR AWS CONFIG FOLDER NOT FOUND"
+    echo "================================="
+    echo ""
+    echo "You have to run aws configure to set your aws key and aws secret"
+    echo ""
+    exit 1
+fi
+
+grep -i "aws_access_key_id = AKI" ~/.aws/credentials >> /dev/null
+
+if [ $? -neq 0 ]; then
+    echo ""
+    echo "================================="
+    echo "ERROR AWS CONFIG FOLDER NOT FOUND"
+    echo "================================="
+    echo ""
+    echo "You have to run aws configure to set your aws key and aws secret"
+    echo ""
+    exit 1
+fi
 
 if [ ! -d ${scriptsFolder} ]; then
     echo ""

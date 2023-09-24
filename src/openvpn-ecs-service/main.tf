@@ -8,9 +8,8 @@ terraform {
 }
 
 provider "aws" {
-  alias   = "spain"
   region  = var.kaira_default_region
-  profile = "kaira-dev-sso"
+  profile = var.kaira_default_role
   default_tags {
     tags = var.kaira_default_tags
   }

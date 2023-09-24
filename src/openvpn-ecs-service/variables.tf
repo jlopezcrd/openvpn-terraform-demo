@@ -94,6 +94,11 @@ data "aws_ecr_repository" "kaira_aws_openvpn_repo" {
   name = "kaira-openvpn"
 }
 
+variable "kaira_default_role" {
+  type = string
+  default = "kaira-dev-sso"
+}
+
 variable "kaira_default_region" {
   type = string
   default = "eu-south-2"

@@ -8,18 +8,10 @@ terraform {
 }
 
 provider "aws" {
-  alias   = "spain"
-  region  = "eu-south-2"
-  profile = "kaira-dev-sso"
+  region  = var.kaira_default_region
+  profile = var.kaira_default_role
   default_tags {
-    tags = {
-      Name        = "kaira-resource-untagged",
-      Client      = "kaira",
-      Backup      = false,
-      Environment = "DEV",
-      ManagedBy   = "terraform"
-      OwnerBy     = "@developez"
-    }
+    tags = var.kaira_default_tags
   }
 }
 
@@ -50,12 +42,6 @@ module "kaira_sgroups_module" {
   source          = "./modules/sgroups"
   kaira_vpc_id    = module.kaira_vpc_module.output_kaira_vpc_id
   kaira_office_ip = local.office_ip_address
-}
-
-module "kaira_keys_module" {
-  source                = "./modules/keys"
-  kaira_public_key_name = local.public_key_name
-  kaira_public_rsa_key  = local.public_rsa_key
 }
 
 module "kaira_ecr_module" {
