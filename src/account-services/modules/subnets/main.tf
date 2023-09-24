@@ -9,7 +9,7 @@ resource "aws_subnet" "kaira_subnet_public_a" {
 
   vpc_id                                      = var.kaira_vpc_id
   cidr_block                                  = cidrsubnet(var.kaira_vpc_ip_block, 4, 2)
-  availability_zone                           = var.kaira_default_region
+  availability_zone                           = "${var.kaira_default_region}a"
   map_public_ip_on_launch                     = true
   enable_resource_name_dns_a_record_on_launch = true
 }
@@ -21,7 +21,7 @@ resource "aws_subnet" "kaira_subnet_public_b" {
 
   vpc_id                                      = var.kaira_vpc_id
   cidr_block                                  = cidrsubnet(var.kaira_vpc_ip_block, 4, 4)
-  availability_zone                           = var.kaira_default_region
+  availability_zone                           = "${var.kaira_default_region}b"
   map_public_ip_on_launch                     = true
   enable_resource_name_dns_a_record_on_launch = true
 }
@@ -33,7 +33,7 @@ resource "aws_subnet" "kaira_subnet_public_c" {
 
   vpc_id                                      = var.kaira_vpc_id
   cidr_block                                  = cidrsubnet(var.kaira_vpc_ip_block, 4, 8)
-  availability_zone                           = var.kaira_default_region
+  availability_zone                           = "${var.kaira_default_region}c"
   map_public_ip_on_launch                     = true
   enable_resource_name_dns_a_record_on_launch = true
 }
