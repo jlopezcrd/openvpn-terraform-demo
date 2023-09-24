@@ -205,7 +205,7 @@ openvpn --config openvpn-service/.generated/clients/developez.ovpn
 
 ## Final thoughts
 
-This project was a bit complex, because I don't usually use container for VPNS. In fact, the incompatibility with FARGATE slowed me down a bit, because it was very difficult to find the issue. (REF to AWS DOCS)[https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_KernelCapabilities.html]
+This project was a bit complex, because I don't usually use container for VPNS. In fact, the incompatibility with FARGATE slowed me down a bit, because it was very difficult to find the issue. [REF to AWS DOCS](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_KernelCapabilities.html)
 
 Also comment, the first deployment was a simple EC2 node with OPENVPN service installed on it, but I thought, it's very simple, I'm going to use containers.
 
