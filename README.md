@@ -140,9 +140,9 @@ Once you've cloned the repository, and you're located in the cloned folder, you 
 
 This bash script is interactive, because you have to answer different configuration questions to build the OPEN VPN container successfully.
 
-By default, the tool will create three VPN users, one for developez(me), julio and mario. You can change this feature, passing a users list as second argument.
+By default, the tool will create three VPN users, one for developez(me), julio and mario. You can change this feature, passing a user list as second argument running the create-vpn-image script after one deployment to add new users. This action generate a new docker image to publish to ECR.
 
-> bash scripts/kaira.sh usuario1 usuario2 usuario3
+> bash scripts/create-vpn-image.sh "antonio marta ana"
 
 ```bash
 cd src
