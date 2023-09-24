@@ -44,8 +44,17 @@ If you would want add another services, it's simple, create another folder into 
 
 To run this project without problems, you need to have installed in your personal computer (linux or macOs) the following tools, or if you're using windows, you must to install on WSL.
 
-- AWS ACCOUNT WITH SPAIN REGION (eu-south-2)
-- AWS ADMIN CREDENTIALS (aws access key and aws secret key)
+If you use Linux:
+> You can install the tools with `apt-get` or `apt` if debian/ubuntu or `yum` if redhat/centos.
+
+If you use MacOs:
+> You can install the tools with `brew`
+
+If you use Windows:
+> You can install the tools into the `wsl` as linux commands
+
+- AWS ACCOUNT WITH **SPAIN REGION** (eu-south-2)
+- AWS **ADMIN** CREDENTIALS (aws access key and aws secret key)
 - git (to clone this project)
 - awscli (tool to interact with AWS API's)
 - terraform (to deploy infrastructure to AWS)
