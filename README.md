@@ -196,9 +196,33 @@ remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194
 
 Connect to the OPEN VPN using the NETWORK LOAD BALANCER. You must to be located in src folder.
 
-```bash
-openvpn --config openvpn-service/.generated/clients/developez.ovpn
+If you can see: `Initialization Sequence Completed` in other terminal you have to do a ping to the targets ips to check the connection.
 
+Alternatively you can add to a OPEN VPN GUI CLIENT as the image bellow:
+
+![OpenVPN GUI CLIENTE 1](docs/gui-openvpn-1.png "openvpn gui client 1")
+![OpenVPN GUI CLIENTE 2](docs/gui-openvpn-2.png "openvpn gui client 2")
+![OpenVPN GUI CLIENTE 3](docs/gui-openvpn-3.png "openvpn gui client 3")
+
+```bash
+developez@vm-linux:~/test-openvpn/src$ sudo openvpn --config openvpn-ecs-service/.generated/clients/{developez,julio or mario}.ovpn
+
+2023-09-24 21:26:09 --cipher is not set. Previous OpenVPN version defaulted to BF-CBC as fallback when cipher negotiation failed in this case. If you need this fallback please add '--data-ciphers-fallback BF-CBC' to your configuration and/or add BF-CBC to --data-ciphers.
+2023-09-24 21:26:09 OpenVPN 2.5.5 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [LZ4] [EPOLL] [PKCS11] [MH/PKTINFO] [AEAD] built on Jul 14 2022
+2023-09-24 21:26:09 library versions: OpenSSL 3.0.2 15 Mar 2022, LZO 2.10
+2023-09-24 21:26:09 TCP/UDP: Preserving recently used remote address: [AF_INET]18.100.197.223:1194
+2023-09-24 21:26:09 UDP link local: (not bound)
+2023-09-24 21:26:09 UDP link remote: [AF_INET]18.100.197.223:1194
+2023-09-24 21:26:09 WARNING: 'link-mtu' is used inconsistently, local='link-mtu 1541', remote='link-mtu 1542'
+2023-09-24 21:26:09 WARNING: 'comp-lzo' is present in remote config but missing in local config, remote='comp-lzo'
+2023-09-24 21:26:09 [vpn-test-ecs.kairadigital.com] Peer Connection Initiated with [AF_INET]18.100.197.223:1194
+2023-09-24 21:26:10 Options error: Unrecognized option or missing or extra parameter(s) in [PUSH-OPTIONS]:1: block-outside-dns (2.5.5)
+2023-09-24 21:26:10 TUN/TAP device tun0 opened
+2023-09-24 21:26:10 net_iface_mtu_set: mtu 1500 for tun0
+2023-09-24 21:26:10 net_iface_up: set tun0 up
+2023-09-24 21:26:10 net_addr_ptp_v4_add: 192.168.255.6 peer 192.168.255.5 dev tun0
+2023-09-24 21:26:10 WARNING: this configuration may cache passwords in memory -- use the auth-nocache option to prevent this
+2023-09-24 21:26:10 Initialization Sequence Completed
 ```
 
 **If you're reading this line, everything went well, and you have an OpenVPN server configured by terraform.**
