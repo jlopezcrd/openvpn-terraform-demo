@@ -1,6 +1,7 @@
 # [DEMO] Installing OpenVPN Server on AWS using terraform
 
 - [Infrastructure Diagram](docs/openvpn-infrastructure-diagram.pdf)
+- [Deployment Video](https://developez-public.s3.eu-west-1.amazonaws.com/KAIRA_ECS_EC2_CLUSTER_OPEN_VPN.mp4)
 
 ## Introduction
 
@@ -57,14 +58,11 @@ I understand that using `aws key and aws secret key` with *admin permissions* is
 
 > If you're going to use in business production mode, you should use a `session crentials` or `aws organizations` or `sso login`
 
-**THE AWS REGION CAN BE CHANGED in config files, but you will have to pass an environment variable when you run the script**
+**THE AWS REGION MUST BE eu-south-2 SPAIN because, the scripts trying to use a profile kaira-dev-sso**
 
-> TF_VAR_kaira_default_region=eu-west-1 bash scripts/kaira.sh
+With some changes in this repository, can be possible to use wathever region, but first, you make sure that the region has enabled all services necessaries and has three availability zones. 
 
-or exporting the var in your ~/.bashrc
-
-> export TF_VAR_kaira_default_region=eu-west-1
-> bash scripts/kaira.sh
+In the next section you will find the command to create the necessary profile
 
 ## How to launch my OpenVPN server using this repository
 
@@ -138,11 +136,61 @@ cd openvpn-terraform-demo
 
 ### Second Step
 
-Once you've cloned the repository, and you're located in the cloned folder, you have to run the automated bash script tool.
+Once you've cloned the repository, and you're located in the cloned folder, you have to run the automated tool.
+
+This bash script is interactive, because you have to answer different configuration questions to build the OPEN VPN container successfully.
+
+By default, the tool will create three VPN users, one for developez(me), julio and mario. You can change this feature, passing a users list as second argument.
+
+> bash scripts/kaira.sh usuario1 usuario2 usuario3
 
 ```bash
 cd src
 bash scripts/kaira.sh
+
+# First you will have to set your password, to run the script as sudo
+================================
+     CREATING DOCKER IMAGE      
+================================
+
+[sudo] password for developez: 
+
+# Second, you will be asked for set a Certificate Authority password. Remember IT: You need this password later
+init-pki complete; you may now create a CA or requests.
+Your newly created PKI dir is: /etc/openvpn/pki
+
+
+Using SSL: openssl OpenSSL 1.1.1g  21 Apr 2020
+
+Enter New CA Key Passphrase: 
+Re-Enter New CA Key Passphrase:
+
+# Third, you need to set the VPN Name CA, for example: vpn-ecs-test.kaira.com
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Common Name (eg: your user, host, or server name) [Easy-RSA CA]:
+
+# Fourth, you will be asked for two times, to write the Certificate Authority password
+writing new private key to '/etc/openvpn/pki/easy-rsa-73.lLPFEN/tmp.PjNgJH'
+-----
+Using configuration from /etc/openvpn/pki/easy-rsa-73.lLPFEN/tmp.gIKLpK
+Enter pass phrase for /etc/openvpn/pki/private/ca.key:
+
+
+# Fifth, three times request the password to unblock the CA to create the default users
+================================
+ Generating vpn user developez... 
+================================
+
+Using SSL: openssl OpenSSL 1.1.1g  21 Apr 2020
+Generating a RSA private key
+...........................................+++++
+..........................+++++
+writing new private key to '/etc/openvpn/pki/easy-rsa-1.OOMLIk/tmp.oGLfEa'
+-----
+Using configuration from /etc/openvpn/pki/easy-rsa-1.OOMLIk/tmp.fNgnDI
+Enter pass phrase for /etc/openvpn/pki/private/ca.key:
 ```
 
 ### Third Step
@@ -201,7 +249,7 @@ remote kaira-openvpn-external-nlb-xxxxxxxxxxxx.elb.eu-south-2.amazonaws.com 1194
 -----BEGIN PRIVATE KEY-----
 ```
 
-### Fifth Step Step
+### Fifth Step
 
 Connect to the OPEN VPN using the NETWORK LOAD BALANCER. You must to be located in src folder.
 
