@@ -16,7 +16,7 @@ Another point to explain, is the HEALTH-CHECKS from NLB or ECS CLUSTER doesn't s
 
 Launching two containers as ESSENTIAL, tell to ECS service that one of them is killed or down, it must destroy the TASK.
 
-There is a TERRAFORM BUG when you're trying to destroy de INFRASTRUCTURE. Terraform attempts to destroy the ECS SERVICE before the AUTOSCALING GROUP.
+There is a TERRAFORM BUG when you're trying to destroy INFRASTRUCTURE. Terraform attempts to destroy the ECS SERVICE before the AUTOSCALING GROUP. **REMEMBER:** When you're running the destroy command with the script kaira-destroy.sh, YOU MUST TO DESTROY the autoscaling group manually to help to terraform continue and left waiting.
 
 You can see here:
 - [STACK OVERFLOW](https://stackoverflow.com/questions/68117174/during-terraform-destroy-terraform-is-trying-to-destroy-the-ecs-cluster-before)
