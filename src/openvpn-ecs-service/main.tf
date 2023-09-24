@@ -247,6 +247,10 @@ resource "aws_ecs_service" "kaira_openvpn_service" {
 
   force_new_deployment = true
 
+  triggers = {
+    redeployment = timestamp()
+  }
+
   # lifecycle {
   #   ignore_changes = [task_definition]
   # }
