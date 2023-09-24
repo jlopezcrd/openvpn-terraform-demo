@@ -21,7 +21,7 @@ fi
 
 grep -i "aws_access_key_id = AKI" ~/.aws/credentials >> /dev/null
 
-if [ $? -neq 0 ]; then
+if [ $? -ne 0 ]; then
     echo ""
     echo "================================="
     echo "ERROR AWS CONFIG FOLDER NOT FOUND"
