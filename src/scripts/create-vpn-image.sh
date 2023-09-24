@@ -3,10 +3,10 @@
 
 users=${1:-"developez julio mario"}
 endpoint="vpn-test-ecs.kairadigital.com"
-folder=./openvpn-ecs-service
+folder=openvpn-ecs-service
 accountId=$(aws sts get-caller-identity --profile kaira-dev-sso --output text | cut -d$'\t' -f 1)
 region=$(aws configure get region --profile kaira-dev-sso)
-output="./.generated"
+output=".generated"
 clients="${output}/clients"
 
 if [ "${accountId}" == "" ] || [ "${region}" == "" ]; then
@@ -37,8 +37,8 @@ if [ -f "${output}/openvpn.conf" ]; then
     echo "================================"
     echo ""
 else
-    sudo docker run -v ${output}:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://${endpoint}
-    sudo docker run -v ${output}:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
+    sudo docker run -v $(pwd)/${output}:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://${endpoint}
+    sudo docker run -v $(pwd)/${output}:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
 fi
 
 for user in $users; do
@@ -57,8 +57,8 @@ for user in $users; do
         continue
     fi
 
-    sudo docker run -v ${output}:/etc/openvpn --rm -it kylemanna/openvpn easyrsa build-client-full ${user} nopass
-    sudo docker run -v ${output}:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient ${user} > "${clients}/${user}.ovpn"
+    sudo docker run -v $(pwd)/${output}:/etc/openvpn --rm -it kylemanna/openvpn easyrsa build-client-full ${user} nopass
+    sudo docker run -v $(pwd)/${output}:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient ${user} > "${clients}/${user}.ovpn"
 done
 
 sudo docker build -t ${accountId}.dkr.ecr.${region}.amazonaws.com/kaira-openvpn:latest .
