@@ -1,3 +1,5 @@
+data "aws_caller_identity" "account" {}
+
 data "aws_ami" "kaira_aws_ubuntu_ami" {
   most_recent = true
 
@@ -83,13 +85,18 @@ data "aws_iam_policy_document" "kaira_aws_sts_policy" {
   }
 }
 
-data "aws_ecr_image" "kaira_aws_openvpn_image" {
-  repository_name = "kaira-openvpn"
-  image_tag       = "latest"
-}
+# data "aws_ecr_image" "kaira_aws_openvpn_image" {
+#   repository_name = "kaira-openvpn"
+#   image_tag       = "latest"
+# }
 
 data "aws_ecr_repository" "kaira_aws_openvpn_repo" {
   name = "kaira-openvpn"
+}
+
+variable "kaira_default_region" {
+  type = string
+  default = "eu-south-2"
 }
 
 variable "kaira_default_tags" {

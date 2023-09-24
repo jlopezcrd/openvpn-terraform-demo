@@ -9,7 +9,7 @@ terraform {
 
 provider "aws" {
   alias   = "spain"
-  region  = "eu-south-2"
+  region  = var.kaira_default_region
   profile = "kaira-dev-sso"
   default_tags {
     tags = var.kaira_default_tags
@@ -57,6 +57,13 @@ resource "aws_security_group" "kaira_openvpn_ecs_sg" {
   description = "Rules for openvpn service"
 
   vpc_id = data.aws_vpc.kaira_aws_vpc.id
+
+  ingress {
+    from_port       = 8
+    to_port         = 0
+    protocol        = "icmp"
+    security_groups = [aws_security_group.kaira_openvpn_nlb_sg.id]
+  }
 
   ingress {
     from_port       = var.kaira_openvpn_container_port
@@ -199,12 +206,19 @@ resource "aws_lb_listener" "kaira_openvpn_nlb_listener" {
 }
 
 resource "null_resource" "kaira_upload_openvpn_image" {
+  depends_on = [data.aws_ecr_repository.kaira_aws_openvpn_repo]
+     
   triggers = {
     redeployment = timestamp()
   }
 
   provisioner "local-exec" {
-    command = "docker push ${data.aws_ecr_repository.kaira_aws_openvpn_repo.repository_url}:latest"
+    interpreter = ["/bin/bash" ,"-c"]
+    command = <<EOF
+    aws ecr get-login-password --region ${var.kaira_default_region} | docker login --username AWS \
+    --password-stdin ${data.aws_caller_identity.account.account_id}.dkr.ecr.${var.kaira_default_region}.amazonaws.com \
+    && docker push ${data.aws_ecr_repository.kaira_aws_openvpn_repo.repository_url}:latest
+    EOF
   }
 }
 
@@ -254,7 +268,7 @@ resource "aws_ecs_task_definition" "kaira_openvpn_task" {
     },
     {
       name : var.kaira_openvpn_container_name,
-      image : "366007218587.dkr.ecr.eu-south-2.amazonaws.com/kaira-openvpn:latest",
+      image : "${data.aws_ecr_repository.kaira_aws_openvpn_repo.repository_url}:latest",
       cpu : 256,
       memory : 256,
       essential : true,

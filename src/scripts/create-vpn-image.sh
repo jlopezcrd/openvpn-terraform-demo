@@ -61,6 +61,6 @@ for user in $users; do
     sudo docker run -v ${output}:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient ${user} > "${clients}/${user}.ovpn"
 done
 
-sudo docker build -t ${accountId}.dkr.ecr.${region}.amazonaws.com/kaira-openvpn:test .
+sudo docker build -t ${accountId}.dkr.ecr.${region}.amazonaws.com/kaira-openvpn:latest .
 
 sudo chown -R $USER:$USER ${output}
