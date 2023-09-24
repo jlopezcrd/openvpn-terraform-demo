@@ -68,11 +68,11 @@ data "aws_subnet" "kaira_aws_subnet_c" {
   }
 }
 
-data "aws_iam_role" "kaira_ecs_task_execution_role" {
+data "aws_iam_role" "kaira_aws_ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
 
-data "aws_iam_policy_document" "kaira_iam_policy_document" {
+data "aws_iam_policy_document" "kaira_aws_sts_policy" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -83,20 +83,49 @@ data "aws_iam_policy_document" "kaira_iam_policy_document" {
   }
 }
 
-variable "kaira_container_name" {
+data "aws_ecr_image" "kaira_aws_openvpn_image" {
+  repository_name = "kaira-openvpn"
+  image_tag       = "latest"
+}
+
+variable "kaira_openvpn_container_name" {
   type      = string
   default   = "openvpn"
   sensitive = false
 }
 
-variable "kaira_container_port" {
+variable "kaira_openvpn_container_port" {
   type      = number
   default   = 1194
   sensitive = false
 }
 
-variable "kaira_container_protocol" {
+variable "kaira_openvpn_container_protocol" {
   type      = string
   default   = "udp"
+  sensitive = false
+}
+
+variable "kaira_openvpn_autoscaling_group_capacity" {
+  type      = number
+  default   = 3
+  sensitive = false
+}
+
+variable "kaira_openvpn_autoscaling_group_min_size" {
+  type      = number
+  default   = 3
+  sensitive = false
+}
+
+variable "kaira_openvpn_autoscaling_group_max_size" {
+  type      = number
+  default   = 3
+  sensitive = false
+}
+
+variable "kaira_openvpn_service_capacity" {
+  type      = number
+  default   = 3
   sensitive = false
 }

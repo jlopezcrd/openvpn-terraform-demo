@@ -1,8 +1,8 @@
-resource "aws_ecr_repository" "kaira_ecr" {
+resource "aws_ecr_repository" "kaira_openvpn" {
   tags = {
-    Name = "kaira-ecr",
+    Name = "kaira-openvpn",
   }
 
-  name = "kaira-ecr"
+  name = "kaira-openvpn"
   force_delete = true
 }

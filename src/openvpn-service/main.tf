@@ -194,7 +194,7 @@ resource "null_resource" "kaira_openvpn_users" {
     mkdir -p ../.clients;
     scp -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        -i ${var.KAIRA_PRIVATE_RSA_PATH} ubuntu@${aws_eip.kaira_openvpn_eip.public_ip}:/opt/openvpn/clients/*.ovpn ../.clients/
+        -i ${var.KAIRA_PRIVATE_RSA_PATH} ubuntu@${aws_eip.kaira_openvpn_eip.public_ip}:/opt/openvpn/clients/*.ovpn ../../.clients/
     echo "--------------"
     echo "OpenVPN clients downloaded"
     echo "--------------"
