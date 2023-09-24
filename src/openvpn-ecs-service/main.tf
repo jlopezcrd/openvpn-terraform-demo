@@ -94,10 +94,10 @@ resource "aws_autoscaling_group" "kaira_autoscaling_group" {
   ]
   launch_configuration = aws_launch_configuration.kaira_launch_configuration.name
 
-  desired_capacity          = 1
-  min_size                  = 1
-  max_size                  = 10
-  health_check_grace_period = 300
+  desired_capacity          = 3
+  min_size                  = 3
+  max_size                  = 3
+  health_check_grace_period = 10
   health_check_type         = "EC2"
 }
 
@@ -217,9 +217,14 @@ resource "aws_ecs_service" "kaira_openvpn_service" {
   name            = "openvpn-service"
   cluster         = aws_ecs_cluster.kaira_ecs_cluster.id
   task_definition = aws_ecs_task_definition.kaira_openvpn_task.arn
-  desired_count   = 1
+  desired_count   = 3
   launch_type     = "EC2"
   #platform_version = "LATEST"
+
+  ordered_placement_strategy {
+    type  = "binpack"
+    field = "memory"
+  }
 
   network_configuration {
     assign_public_ip = false
