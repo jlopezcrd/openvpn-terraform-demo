@@ -8,7 +8,7 @@ accountServicesFolder="./account-services"
 openVpnService="openvpn-ecs-cluster"
 openVpnClusterFolder="./openvpn-ecs-service"
 
-if [ ! -d ${awsConfigFolder} ] || [ ! -d "${awsConfigFolder}/credentials" ]; then
+if [ ! -d ~/.aws ] || [ ! -d ~/.aws/credentials ]; then
     echo ""
     echo "================================="
     echo "ERROR AWS CONFIG FOLDER NOT FOUND"
