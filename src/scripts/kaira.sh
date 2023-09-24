@@ -30,6 +30,15 @@ if [ $(aws configure get region) != "eu-south-2" ]; then
     exit 1
 fi
 
+echo ""
+echo "================================"
+echo " INITIALIZING TERRAFORM MODULES "
+echo "================================"
+echo ""
+
+terraform -chdir=${accountServicesFolder} init
+terraform -chdir=${openVpnClusterFolder} init
+
 
 echo ""
 echo "================================"
