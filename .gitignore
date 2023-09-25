@@ -8,4 +8,4 @@
 **.ovpn
 **account-services.output.txt
 **openvpn.config.txt
-**openvpn.ecs.config.txt
+**openvpn-ecs-cluster.output.txt
