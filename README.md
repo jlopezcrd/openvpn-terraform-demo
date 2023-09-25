@@ -293,6 +293,14 @@ developez@vm-linux:~$ sudo openvpn --config openvpn-ecs-service/.generated/clien
 
 **If you're reading this line, everything went well, and you have an OpenVPN server configured by terraform.**
 
+### Destroy and rollback
+
+To revert all configurations and delete all resources from AWS, you have to run this command, but **REMEMBER** There is a bug in the `AWS TERRAFORM PROVIDER` and it will delete `ECS SERVICE` before auto scaling group. To solve terraform waiting, you need to delete auto scaling group manually and then, terraform will continue normal.
+
+```bash
+developez@vm-linux:~$ bash scripts/kaira-destroy.sh
+```
+
 ## Final thoughts
 
 This project was a bit complex, because I don't usually use container for VPNS. In fact, the incompatibility with FARGATE slowed me down a bit, because it was very difficult to find the issue. [REF to AWS DOCS](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_KernelCapabilities.html)
