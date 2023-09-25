@@ -6,6 +6,6 @@
 **.tfstate.*.backup
 **.tfstate.backup
 **.ovpn
-**account.output.txt
+**account-services.output.txt
 **openvpn.config.txt
 **openvpn.ecs.config.txt
