@@ -363,6 +363,7 @@ resource "null_resource" "kaira_openvpn_users" {
   }
 
   provisioner "local-exec" {
+    interpreter = [ "/bin/bash", "-c" ]
     command = <<EOF
     echo "--------------"
     echo "Applying dns endpoint to OpenVPN clients"
@@ -371,7 +372,7 @@ resource "null_resource" "kaira_openvpn_users" {
     for client in $(find . -name "*.ovpn"); do
       echo "Editing: $client ..."
       config=$(cat $client)
-      echo "$${config//vpn-test-ecs.kairadigital.com/${aws_lb.kaira_openvpn_external_nlb.dns_name}}"
+      echo "$${config//vpn-test-ecs.kairadigital.com/${aws_lb.kaira_openvpn_external_nlb.dns_name}}" > $client
     done
     EOF
   }
