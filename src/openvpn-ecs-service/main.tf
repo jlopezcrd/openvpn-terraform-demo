@@ -370,7 +370,8 @@ resource "null_resource" "kaira_openvpn_users" {
     cd .generated/clients
     for client in $(find . -name "*.ovpn"); do
       echo "Editing: $client ..."
-      sed -i 's/vpn-test-ecs.kairadigital.com/${aws_lb.kaira_openvpn_external_nlb.dns_name}/g' $client
+      config=$(cat $client)
+      echo "$${config//vpn-test-ecs.kairadigital.com/${aws_lb.kaira_openvpn_external_nlb.dns_name}}"
     done
     EOF
   }

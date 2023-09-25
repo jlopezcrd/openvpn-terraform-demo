@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outputFolder="../../"
+outputFolder="../"
 awsConfigFolder="~/.aws"
 scriptsFolder="./scripts"
 accountServices="account-services"
