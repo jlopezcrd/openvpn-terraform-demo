@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outputFolder="../../"
+outputFolder="../"
 awsConfigFolder="~/.aws"
 scriptsFolder="./scripts"
 accountServices="account-services"
@@ -77,8 +77,8 @@ echo ""
 
 terraform -chdir=${openVpnClusterFolder} destroy --auto-approve
 
-if [ -f ${openVpnService}.output.txt ]; then
-    ${openVpnService}.output.txt
+if [ -f "${outputFolder}/${openVpnService}.output.txt" ]; then
+    rm -f ${outputFolder}/${openVpnService}.output.txt
 fi
 
 echo ""
@@ -89,6 +89,6 @@ echo ""
 
 terraform -chdir=${accountServicesFolder} destroy --auto-approve
 
-if [ -f ${accountServices}.output.txt ]; then
-    ${accountServices}.output.txt
+if [ -f "${outputFolder}/${accountServices}.output.txt" ]; then
+    rm -f ${outputFolder}/${accountServices}.output.txt
 fi

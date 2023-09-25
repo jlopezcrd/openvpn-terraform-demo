@@ -63,4 +63,4 @@ done
 
 sudo docker build -t ${accountId}.dkr.ecr.${region}.amazonaws.com/kaira-openvpn:latest .
 
-sudo chown -R $USER:$USER ${output}
+sudo chown -R $USER: ${output}
